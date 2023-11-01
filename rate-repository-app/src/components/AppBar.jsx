@@ -1,5 +1,6 @@
 import { View, ScrollView, StyleSheet } from 'react-native'
 import Constants from 'expo-constants'
+import { Link } from 'react-router-native'
 
 import theme from '../theme'
 import Text from './Text'
@@ -26,14 +27,15 @@ const styles = StyleSheet.create({
     color: 'white',
   },
 })
-
-const AppBarTab = ({ children }) => {
+const AppBarTab = ({ children, ...props }) => {
   return (
-    <View style={styles.tabContainer}>
-      <Text fontWeight="bold" style={styles.tabText}>
-        {children}
-      </Text>
-    </View>
+    <Link style={styles.tabTouchable} {...props}>
+      <View style={styles.tabContainer}>
+        <Text fontWeight="bold" style={styles.tabText}>
+          {children}
+        </Text>
+      </View>
+    </Link>
   )
 }
 
@@ -41,12 +43,10 @@ const AppBar = () => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} horizontal>
-        <AppBarTab>Repositories</AppBarTab>
-        <AppBarTab>GitHub</AppBarTab>
-        <AppBarTab>Sign in</AppBarTab>
+        <AppBarTab to="/">Repositories</AppBarTab>
+        <AppBarTab to="/sign-in">Sign in</AppBarTab>
       </ScrollView>
     </View>
   )
 }
-
 export default AppBar
