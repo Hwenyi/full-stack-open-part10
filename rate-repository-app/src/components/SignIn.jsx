@@ -1,6 +1,8 @@
 import React from 'react'
 import { Text, TextInput, Pressable, View, StyleSheet } from 'react-native'
 import { Formik, useField } from 'formik'
+import FormikTextInput from './FormikTextInput'
+import * as yup from 'yup'
 
 const initialValues = {
   username: '',
@@ -14,13 +16,8 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 32,
   },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
+  fieldContainer: {
+    marginBottom: 16,
   },
   button: {
     backgroundColor: 'blue',
@@ -33,24 +30,20 @@ const styles = StyleSheet.create({
   },
 })
 
+const validationSchema = yup.object().shape({
+  username: yup.string().required('Username is required'),
+  password: yup.string().required('Password is required'),
+})
+
 const SignInForm = ({ onSubmit }) => {
-  const [usernameField, usernameMeta, usernameHelpers] = useField('username')
-  const [passwordField, passwordMeta, passwordHelpers] = useField('password')
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        onChangeText={(text) => usernameHelpers.setValue(text)}
-        value={usernameField.value}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        onChangeText={(text) => passwordHelpers.setValue(text)}
-        value={passwordField.value}
-      />
+      <View style={styles.fieldContainer}>
+        <FormikTextInput name="username" placeholder="Username" />
+      </View>
+      <View style={styles.fieldContainer}>
+        <FormikTextInput name="password" placeholder="Password" secureTextEntry />
+      </View>
       <Pressable style={styles.button} onPress={onSubmit}>
         <Text style={styles.buttonText}>Sign in</Text>
       </Pressable>
@@ -64,7 +57,7 @@ const SignIn = () => {
   }
 
   return (
-    <Formik initialValues={initialValues} onSubmit={onSubmit}>
+    <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
       {({ handleSubmit }) => <SignInForm onSubmit={handleSubmit} />}
     </Formik>
   )
