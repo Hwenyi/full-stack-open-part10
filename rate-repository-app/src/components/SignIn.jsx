@@ -1,37 +1,26 @@
-import React from 'react'
-import { Text, TextInput, Pressable, View, StyleSheet } from 'react-native'
-import { Formik, useField } from 'formik'
-import FormikTextInput from './FormikTextInput'
+import { StyleSheet, View } from 'react-native'
+import { Formik } from 'formik'
 import * as yup from 'yup'
-import useSignIn from '../hooks/useSignIn'
 import { useNavigate } from 'react-router-native'
-import { useState } from 'react'
+
+import Button from './Button'
+import FormikTextInput from './FormikTextInput'
+import useSignIn from '../hooks/useSignIn'
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: 'white',
+    padding: 15,
+  },
+  fieldContainer: {
+    marginBottom: 15,
+  },
+})
 
 const initialValues = {
   username: '',
   password: '',
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 16,
-    backgroundColor: '#fff',
-    paddingTop: 16,
-    paddingBottom: 32,
-  },
-  fieldContainer: {
-    marginBottom: 16,
-  },
-  button: {
-    backgroundColor: 'blue',
-    padding: 10,
-    alignItems: 'center',
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: 'white',
-  },
-})
 
 const validationSchema = yup.object().shape({
   username: yup.string().required('Username is required'),
@@ -47,9 +36,7 @@ const SignInForm = ({ onSubmit }) => {
       <View style={styles.fieldContainer}>
         <FormikTextInput name="password" placeholder="Password" secureTextEntry />
       </View>
-      <Pressable style={styles.button} onPress={onSubmit}>
-        <Text style={styles.buttonText}>Sign in</Text>
-      </Pressable>
+      <Button onPress={onSubmit}>Sign in</Button>
     </View>
   )
 }
@@ -57,31 +44,18 @@ const SignInForm = ({ onSubmit }) => {
 const SignIn = () => {
   const [signIn] = useSignIn()
   const navigate = useNavigate()
-  const [message, setMessage] = useState(null)
 
   const onSubmit = async (values) => {
     const { username, password } = values
 
-    try {
-      await signIn({ username, password })
-      setMessage('Signed in successfully')
-      navigate('/', { replace: true })
-    } catch (e) {
-      setMessage(e.message)
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
-    }
+    await signIn({ username, password })
+
+    navigate('/', { replace: true })
   }
 
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
-      {({ handleSubmit }) => (
-        <>
-          <SignInForm onSubmit={handleSubmit} />
-          {message && <Text>{message}</Text>}
-        </>
-      )}
+      {({ handleSubmit }) => <SignInForm onSubmit={handleSubmit} />}
     </Formik>
   )
 }
