@@ -15,3 +15,11 @@ export const REPOSITORY_BASE_FIELDS = gql`
     createdAt
   }
 `;
+
+export const USER_BASE_FIELDS = gql`
+  fragment userBaseFields on User {
+    id
+    username
+    createdAt
+  }
+`;

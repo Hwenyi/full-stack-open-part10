@@ -3,6 +3,9 @@ import { Text, TextInput, Pressable, View, StyleSheet } from 'react-native'
 import { Formik, useField } from 'formik'
 import FormikTextInput from './FormikTextInput'
 import * as yup from 'yup'
+import useSignIn from '../hooks/useSignIn'
+import { useNavigate } from 'react-router-native'
+import { useState } from 'react'
 
 const initialValues = {
   username: '',
@@ -52,13 +55,33 @@ const SignInForm = ({ onSubmit }) => {
 }
 
 const SignIn = () => {
-  const onSubmit = (values) => {
-    console.log(values)
+  const [signIn] = useSignIn()
+  const navigate = useNavigate()
+  const [message, setMessage] = useState(null)
+
+  const onSubmit = async (values) => {
+    const { username, password } = values
+
+    try {
+      await signIn({ username, password })
+      setMessage('Signed in successfully')
+      navigate('/', { replace: true })
+    } catch (e) {
+      setMessage(e.message)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    }
   }
 
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
-      {({ handleSubmit }) => <SignInForm onSubmit={handleSubmit} />}
+      {({ handleSubmit }) => (
+        <>
+          <SignInForm onSubmit={handleSubmit} />
+          {message && <Text>{message}</Text>}
+        </>
+      )}
     </Formik>
   )
 }
